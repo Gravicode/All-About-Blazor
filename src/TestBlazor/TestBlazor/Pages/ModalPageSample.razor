@@ -1,0 +1,49 @@
+﻿@inject IModalService ModalService
+@using TestBlazor.Data
+<div class="simple-form">
+
+    <div class="form-group">
+        <label for="movie-name">Movie Name</label>
+        <input @bind="@Movie.Name" type="text" class="form-control" id="movie-name" />
+    </div>
+
+    <div class="form-group">
+        <label for="year">Year</label>
+        <input @bind="@Movie.Year" type="text" class="form-control" id="year" />
+    </div>
+
+    <button @onclick="@SaveMovie" class="btn btn-primary">Submit</button>
+    <button @onclick="@Cancel" class="btn btn-secondary">Cancel</button>
+</div>
+
+@code {
+
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+
+    int MovieId { get; set; }
+    Movie Movie { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        MovieId = Parameters.Get<int>("MovieId");
+        LoadMovie(MovieId);
+    }
+
+    void LoadMovie(int movieId)
+    {
+        Movie = new Movie() { Name="Asep Show", Year=2012 };
+        //MovieService.Load(movieId);
+    }
+
+    void SaveMovie()
+    {
+        //MovieService.Save(Movie);
+        ModalService.Close(ModalResult.Ok<Movie>(Movie));
+    }
+
+    void Cancel()
+    {
+        ModalService.Cancel();
+    }
+
+}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
+using Blazored.Modal;
 using Blazored.SessionStorage;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Builder;
@@ -35,6 +36,7 @@ namespace TestBlazor
             services.AddBlazoredLocalStorage();
             services.AddBlazoredSessionStorage();
             services.AddBlazoredToast();
+            services.AddBlazoredModal();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

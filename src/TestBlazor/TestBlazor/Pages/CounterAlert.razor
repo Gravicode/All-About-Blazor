@@ -1,0 +1,26 @@
+﻿@page "/counter-alert"
+@using TestBlazor.Components
+<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<hr />
+<AlertMessages Items="alerts" Context="message" OnDelete="DeleteItem">
+    <AlertTemplate>
+        <span>this is an alert @message</span>
+    </AlertTemplate>
+</AlertMessages>
+@code {
+    int currentCount = 0;
+    List<int> alerts = new List<int>();
+    void IncrementCount()
+    {
+        alerts.Add(currentCount++);
+    }
+
+    void DeleteItem(object item)
+    {
+        alerts.Remove((int)item);
+    }
+}

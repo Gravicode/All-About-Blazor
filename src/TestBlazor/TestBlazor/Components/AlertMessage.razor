@@ -1,0 +1,7 @@
+﻿<h3>AlertMessage</h3>
+<div class="alert alert-danger">
+    @ChildContent
+</div>
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
