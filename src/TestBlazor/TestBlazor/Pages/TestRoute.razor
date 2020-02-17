@@ -1,0 +1,30 @@
+﻿<h3>TestRoute</h3>
+@layout OtherLayout
+@page "/test-route/{index:int}"
+@page "/test-route"
+@inject NavigationManager NavMgr
+@using Microsoft.AspNetCore.WebUtilities
+<div class="alert alert-info">
+    Counter : @index
+</div>
+<button class="btn btn-info" @onclick="@NextInc" >Click Me</button>
+<button class="btn btn-alert" @onclick="@GotoHome" >Go to home</button>
+@code {
+    [Parameter]
+    public int index{set;get;}=0;
+
+    void GotoHome(){
+            NavMgr.NavigateTo($"/");
+    }
+    void NextInc(){
+        index++;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = NavMgr.ToAbsoluteUri(NavMgr.Uri);
+        if(QueryHelpers.ParseQuery(uri.Query).TryGetValue("count",out var paramCount)){
+            index = int.Parse(paramCount);
+        }
+    }
+    
+}
