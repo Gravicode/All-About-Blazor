@@ -1,0 +1,31 @@
+﻿@page "/notification-demo"
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@inject IToastService toastService
+@inject IJSRuntime JSRuntime;
+<BlazoredToasts Position="ToastPosition.BottomRight"
+                Timeout="10"
+                SuccessClass="success-toast-override"
+                SuccessIconClass="fa fa-thumbs-up"
+                ErrorIconClass="fa fa-bug" />
+<h3>NotificationDemo</h3>
+<p>Pesan kamu:</p>
+<input type="text" @bind="@pesan" />
+
+<button class="btn btn-info" @onclick="@(() => toastService.ShowInfo(pesan))">Info Toast</button>
+<button class="btn btn-success" @onclick="@(() => toastService.ShowSuccess(pesan, "Congratulations!"))">Success Toast</button>
+<button class="btn btn-warning" @onclick="@(() => toastService.ShowWarning(pesan))">Warning Toast</button>
+<button class="btn btn-danger" @onclick="@(() => toastService.ShowError(pesan))">Error Toast</button>
+<button class="btn btn-dark" @onclick="@(() => SendBrowserNotif())">Error Toast</button>
+
+@code {
+    string pesan = "sample message";
+    async Task SendBrowserNotif()
+    {
+
+        await JSRuntime.InvokeVoidAsync("notifyMe", "Info", pesan, "https://d29fhpw069ctt2.cloudfront.net/icon/image/38033/preview.svg");
+
+    }
+
+}
