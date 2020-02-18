@@ -1,0 +1,101 @@
+﻿@page "/crud-demo"
+
+@inject MahasiswaService service
+@inject IJSRuntime jsRuntime
+@using TestBlazor.Models
+@using TestBlazor.Services
+<h1>Data Mahasiswa</h1>
+
+<p>This component demonstrates fetching data from Database.</p>
+
+@if (DataMahasiswa == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>NIM</th>
+                <th>Nama</th>
+                <th>Alamat</th>
+                <th>Phone</th>
+                <th>Jenis Kelamin</th>
+                <th>Tanggal Lahir</th>
+                <th>Tinggi</th>
+                <th>Berat</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in DataMahasiswa)
+            {
+                <tr>
+                    <td>@item.Nim</td>
+                    <td>@item.Nama</td>
+                    <td>@item.Alamat</td>
+                    <td>@item.Phone</td>
+                    <td>@(item.JenisKelamin==1 ? "Laki-laki":"Perempuan")</td>
+                    <td>@item.TanggalLahir.ToShortDateString()</td>
+                    <td>@item.Tinggi cm</td>
+                    <td>@item.Berat kg</td>
+                    <td>
+                        <input type="button" class="btn btn-primary" @onclick="(() => PrepareForEdit(item))" data-toggle="modal" data-target="#taskModal" value="Edit" />
+                        <input type="button" class="btn btn-danger" @onclick="(() => PrepareForDelete(item))" data-toggle="modal" data-target="#confirmDeleteModal" value="Delete" />
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<div>
+    <input type="button" data-toggle="modal" data-target="#taskModal" class="btn btn-primary" value="Add Data" @onclick="(() => InitializeTaskObject())" />
+</div>
+<ConfirmDialog OnClick="@Delete" />
+<MahasiswaDetail TaskObject=@taskObject DataChanged="@DataChanged">
+    <CustomHeader>@customHeader</CustomHeader>
+</MahasiswaDetail>
+
+@code {
+
+    string customHeader = string.Empty;
+    List<Mahasiswas> DataMahasiswa;
+    Mahasiswas taskObject = new Mahasiswas();
+
+    protected override async Task OnInitializedAsync()
+    {
+        DataMahasiswa = service.GetAllData();
+    }
+
+
+    private void InitializeTaskObject()
+    {
+        taskObject = new Mahasiswas();
+        //taskObject.Id = -1;
+        taskObject.TanggalLahir = DateTime.Now;
+        customHeader = "Add New Mahasiswa";
+    }
+    private async void DataChanged()
+    {
+        DataMahasiswa = service.GetAllData();
+        StateHasChanged();
+    }
+    private void PrepareForEdit(Mahasiswas task)
+    {
+        customHeader = "Edit Mahasiswa";
+        taskObject = task;
+    }
+    private void PrepareForDelete(Mahasiswas task)
+    {
+        taskObject = task;
+    }
+    private async Task Delete()
+    {
+        var task = service.DeleteData(taskObject.Id);
+        await jsRuntime.InvokeAsync<object>("CloseModal", "confirmDeleteModal");
+        DataMahasiswa =  service.GetAllData();
+        taskObject = new Mahasiswas() { Id=-1 };
+    }
+}

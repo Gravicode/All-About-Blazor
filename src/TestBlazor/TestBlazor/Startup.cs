@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TestBlazor.Data;
+using TestBlazor.Services;
 
 namespace TestBlazor
 {
@@ -37,6 +38,8 @@ namespace TestBlazor
             services.AddBlazoredSessionStorage();
             services.AddBlazoredToast();
             services.AddBlazoredModal();
+            services.AddTransient<MahasiswaService>();
+            Constants.SQLConn = Configuration["SqlConn"];
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

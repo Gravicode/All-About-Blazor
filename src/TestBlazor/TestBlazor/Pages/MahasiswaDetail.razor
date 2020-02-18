@@ -1,0 +1,115 @@
+﻿@using TestBlazor.Models
+@using TestBlazor.Services
+@inject MahasiswaService service
+@inject IJSRuntime jsRuntime
+
+<div class="modal" tabindex="-1" role="dialog" id="taskModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@CustomHeader</h5>
+                
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="@TaskObject" OnValidSubmit="@HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="form-group">
+                        <label for="nama">Nama</label>
+                        <input type="hidden" @bind-value="@TaskObject.Id" />
+                        <InputText id="nama" class="form-control" @bind-Value="@TaskObject.Nama" />
+                        <ValidationMessage For="@(() => TaskObject.Nama)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="nim">NIM</label>
+                        <InputText id="nim" class="form-control" @bind-Value="@TaskObject.Nim" />
+                        <ValidationMessage For="@(() => TaskObject.Nim)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <InputText id="phone" class="form-control" @bind-Value="@TaskObject.Phone" />
+                        <ValidationMessage For="@(() => TaskObject.Phone)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="jenis-kelamin">Jenis Kelamin</label>
+                        <InputSelect id="jenis-kelamin" class="form-control"
+                                     @bind-Value="TaskObject.JenisKelamin">
+                            <option value="-1">Select</option>
+                            @for (int i = 0; i < Kelamins.Count; i++)
+                            {
+                                <option value="@i">
+                                    @Kelamins[i]
+                                </option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => TaskObject.JenisKelamin)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal-lahir">Tanggal Lahir</label>
+                        <input type="date" id="tanggal-lahir" name="tanggallahir" @bind-value="@TaskObject.TanggalLahir" />
+                        <ValidationMessage For="@(() => TaskObject.TanggalLahir)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="alamat">Alamat</label>
+                        <InputTextArea id="alamat" class="form-control" @bind-Value="@TaskObject.Alamat" />
+                        <ValidationMessage For="@(() => TaskObject.Alamat)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="berat">Berat</label>
+                        <InputNumber type="number" id="berat" name="berat" class="form-control" @bind-Value="@TaskObject.Berat" />
+                        <ValidationMessage For="@(() => TaskObject.Berat)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="tinggi">Tinggi</label>
+                        <InputNumber id="tinggi" class="form-control" @bind-Value="@TaskObject.Tinggi" />
+                        <ValidationMessage For="@(() => TaskObject.Tinggi)" />
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </EditForm>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment CustomHeader { get; set; }
+    [Parameter]
+    public Mahasiswas TaskObject { get; set; }
+    [Parameter]
+    public Action DataChanged { get; set; }
+    List<string> Kelamins = new List<string>() { "Perempuan", "Laki-laki" };
+
+    private async void HandleValidSubmit()
+    {
+        if (TaskObject.Id == 0)
+        {
+            //TaskObject.Id = service.GetLastId();
+            service.InsertData(TaskObject);
+        }
+        else
+        {
+            service.UpdateData(TaskObject);
+        }
+
+        await CloseTaskModal();
+        DataChanged?.Invoke();
+    }
+
+
+
+    private async Task CloseTaskModal()
+    {
+        await jsRuntime.InvokeAsync<object>("CloseModal", "taskModal");
+    }
+
+
+}
