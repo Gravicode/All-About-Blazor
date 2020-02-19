@@ -2,7 +2,7 @@
 @using TestBlazor.Components
 @using TestBlazor.Data
 @inject WeatherForecastService ForecastService
-
+@using System.Threading 
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from a service.</p>
@@ -40,7 +40,7 @@
 
 
 @code {
-    WeatherForecast[] forecasts;
+    WeatherForecast[] forecasts = null;
 
     protected override async Task OnInitializedAsync()
     {
