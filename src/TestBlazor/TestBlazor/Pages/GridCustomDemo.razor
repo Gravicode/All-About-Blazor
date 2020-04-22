@@ -1,0 +1,88 @@
+﻿@page "/grid-demo"
+@using TestBlazor.Components
+@using TestBlazor.Data
+@using System.Data
+
+@inject WeatherForecastService ForecastService
+<b>Bind to List</b>
+<GridView @ref="gv" DataSource="datas" ShowAllColumns="false" OnAction="@ActionItem">
+    <GridColumns>
+        <GridColumn ColumnName="Date" HeaderTitle="Tanggal"></GridColumn>
+        <GridColumn ColumnName="TemperatureC" HeaderTitle="Temp C"></GridColumn>
+        <GridColumn ColumnName="Summary" HeaderTitle="Keterangan"></GridColumn>
+    </GridColumns>
+</GridView>
+<hr />
+<b>Bind to Data Table</b>
+<GridView @ref="gv2" DataSource="dt" OnAction="ActionItem2" ShowAllColumns="true">
+   
+</GridView>
+<div class="alert alert-info">
+    @Pesan
+</div>
+@code {
+    GridView gv;
+    GridView gv2;
+
+    WeatherForecast[] datas = null;
+    DataTable dt;
+    public string Pesan { get; set; } = "";
+    protected override async Task OnInitializedAsync()
+    {
+        datas = await ForecastService.GetForecastAsync(DateTime.Now);
+        GenerateDataTable();
+    }
+
+    void GenerateDataTable()
+    {
+        if (datas != null)
+        {
+            var first = datas.FirstOrDefault();
+            dt = new DataTable("data");
+            dt.Columns.Add(nameof(first.Date));
+            dt.Columns.Add(nameof(first.TemperatureC));
+            dt.Columns.Add(nameof(first.TemperatureF));
+            dt.Columns.Add(nameof(first.Summary));
+            foreach (var item in datas)
+            {
+                var newRow = dt.NewRow();
+                newRow[nameof(first.Date)] = item.Date;
+                newRow[nameof(first.TemperatureC)] = item.TemperatureC;
+                newRow[nameof(first.TemperatureF)] = item.TemperatureF;
+                newRow[nameof(first.Summary)] = item.Summary;
+                dt.Rows.Add(newRow);
+
+            }
+            dt.AcceptChanges();
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (gv != null)
+            {
+                gv.AddActions("View", "View");
+                gv.AddActions("Change", "Change", "btn btn-success");
+                gv.AddActions("Delete", "Delete", "btn btn-danger");
+                StateHasChanged();
+            }
+            if (gv2 != null)
+            {
+                gv2.AddActions("View", "View");
+                gv2.AddActions("Change", "Change", "btn btn-success");
+                gv2.AddActions("Delete", "Delete", "btn btn-danger");
+                StateHasChanged();
+            }
+        }
+    }
+
+    void ActionItem(Tuple<string, object> item)
+    {
+        Pesan = $"Action table 1 -> {item.Item1} di trigger dengan value : {(item.Item2 as WeatherForecast).Summary.ToString()}";
+    }
+    void ActionItem2(Tuple<string, object> item)
+    {
+        Pesan = $"Action table 2 -> {item.Item1} di trigger dengan value : {(item.Item2 as DataRow)["Summary"].ToString()}";
+    }
+}

@@ -1,16 +1,33 @@
 ﻿@page "/counter-alert"
 @using TestBlazor.Components
-<h1>Counter</h1>
+<h1>Counter and Tab</h1>
+
+<TabControl>
+    <TabPage Text="Tab 1">
+        <h1>The first tab</h1>
+    </TabPage>
+    <TabPage Text="Tab 2">
+        <h1>The second tab</h1>
+    </TabPage>
+    <TabPage Text="Tab 3">
+        <h1>The third tab</h1>
+    </TabPage>
+</TabControl>
 
 <p>Current count: @currentCount</p>
 
+
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 <hr />
+
+
 <AlertMessages Items="alerts" Context="message" OnDelete="DeleteItem">
     <AlertTemplate>
         <span>this is an alert @message</span>
     </AlertTemplate>
 </AlertMessages>
+
+
 @code {
     int currentCount = 0;
     List<int> alerts = new List<int>();

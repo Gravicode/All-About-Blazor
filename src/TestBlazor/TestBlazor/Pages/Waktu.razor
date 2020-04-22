@@ -1,0 +1,9 @@
+﻿<h3>Waktu</h3>
+
+@ChildContent
+<div class="alert alert-info">Today, @DateTime.Now.ToString("dd/MMM/yy HH:mm")</div>
+
+@code {
+    
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

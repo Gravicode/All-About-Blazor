@@ -1,0 +1,53 @@
+﻿@page "/binding-demo"
+<h3>Binding Demo</h3>
+
+<b>One way binding</b>
+<hr />
+<div class="row">
+    <div class="col-4">
+        nilai 1 : <input type="number" value="@nilai1" @onchange="Hitung1" />
+    </div>
+    <div class="col-4">
+        nilai 2 : <input type="number" value="@nilai2" @oninput="Hitung2" />
+    </div>
+    <div class="col-4">
+        Nilai 1 + Nilai 2 = @total
+    </div>
+</div>
+<br/>
+<b>Two way binding</b>
+<hr />
+<div class="row">
+    <div class="col-4">
+        nilai 1 : <input type="number" @bind="@nilai1b" @bind:event="oninput" />
+    </div>
+    <div class="col-4">
+        nilai 2 : <input type="number" @bind="@nilai2b" @bind:event="onchange" />
+    </div>
+    <div class="col-4">
+        Nilai 1 + Nilai 2 = @(nilai1b+nilai2b)
+    </div>
+</div>
+@code {
+    int nilai1 { set; get; } = 0;
+    int nilai2 { set; get; } = 0;
+    int nilai1b { set; get; } = 0;
+    int nilai2b { set; get; } = 0;
+    int total { set; get; } = 0;
+    void Hitung1(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int nilaix))
+        {
+            nilai1 = nilaix;
+            total = nilai1 + nilai2;
+        }
+    }
+    void Hitung2(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int nilaix))
+        {
+            nilai2 = nilaix;
+            total = nilai1 + nilai2;
+        }
+    }
+}

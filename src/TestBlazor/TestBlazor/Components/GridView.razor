@@ -1,0 +1,219 @@
+﻿@*@typeparam TItem*@
+@using System.Data;
+<CascadingValue Value="this">
+
+    @if ((Items !=null && Items.Count > 0) || (tableData!=null && tableData.Rows.Count>0) )
+    {
+        if (ShowAllColumns)
+        {
+            GenerateTempColumns();
+        }
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        @foreach (var col in GetAllColumns())
+                        {
+                            <th> @(col.ColumnName) </th>
+                        }
+                        @if (Actions != null && Actions.Count > 0)
+                        {
+                            <th>Actions</th>
+                        }
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (isDataTable)
+                    {
+                        foreach (DataRow item in tableData.Rows)
+                        {
+
+                            <tr>
+                                @foreach (var col in GetAllColumns())
+                                {
+                                    <td> @item[col.ColumnName] </td>
+                                }
+                                @if (Actions.Count > 0)
+                                {
+                                    <td>
+                                        @foreach (var btn in Actions)
+                                        {
+                                            @if (OnAction.HasDelegate)
+                                            {
+                                                <button @onclick="@(_ => { HandleAction(btn.CommandName, item); })" type="button" class="@btn.ClassName">
+                                                    @btn.Title
+                                                </button>
+                                            }
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in Items)
+                        {
+
+                            <tr>
+                                @foreach (var col in GetAllColumns())
+                                {
+                                    <td> @(GetPropValue(item, col.ColumnName)) </td>
+                                }
+                                @if (Actions.Count > 0)
+                                {
+                                    <td>
+                                        @foreach (var btn in Actions)
+                                        {
+                                            @if (OnAction.HasDelegate)
+                                            {
+                                                <button @onclick="@(_ => { HandleAction(btn.CommandName, item); })" type="button" class="@btn.ClassName">
+                                                    @btn.Title
+                                                </button>
+                                            }
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+    }
+    else
+    {
+        <p>@EmptyDataDesc</p>
+    }
+    @GridColumns
+</CascadingValue>
+
+@code {
+    [Parameter] public string EmptyDataDesc { get; set; } = "No Data Found.";
+    IReadOnlyList<object> Items { get; set; }
+    DataTable tableData { get; set; }
+    [Parameter]
+    public RenderFragment GridColumns { get; set; }
+    bool isDataTable = false;
+    [Parameter]
+    public object DataSource
+    {
+        get
+        {
+            if (isDataTable)
+                return tableData;
+            else
+                return Items;
+        }
+        set
+        {
+            if(value is DataTable)
+            {
+                tableData = value as DataTable;
+                isDataTable = true;
+            }
+            else
+            {
+                Items = value as IReadOnlyList<object>;
+                isDataTable = false;
+            }
+        }
+    }
+    [Parameter] public EventCallback<Tuple<string, object>> OnAction { get; set; }
+    List<CommandInfo> Actions { get; set; }
+    [Parameter] public bool ShowAllColumns { get; set; }
+    public List<GridColumn> AllColumns = new List<GridColumn>();
+    public List<GridColumn> TempColumns = new List<GridColumn>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Actions == null) Actions = new List<CommandInfo>();
+    }
+
+    List<GridColumn> GetAllColumns()
+    {
+        if (ShowAllColumns)
+        {
+            return TempColumns;
+        }
+        else
+        {
+            return AllColumns;
+        }
+    }
+
+    void GenerateTempColumns()
+    {
+        if (TempColumns.Count <= 0)
+        {
+            if (!isDataTable)
+            {
+                var first = Items.FirstOrDefault();
+                foreach (var col in GetAllPropsFromClass(first))
+                {
+                    TempColumns.Add(new GridColumn() { ColumnName = col, HeaderTitle = col });
+                }
+            }
+            else
+            {
+                foreach (DataColumn col in tableData.Columns)
+                {
+                    TempColumns.Add(new GridColumn() { ColumnName = col.ColumnName, HeaderTitle = col.ColumnName });
+                }
+            }
+
+        }
+    }
+    public void AddActions(string Title, string ActionName, string CssClass = "btn btn-info")
+    {
+        if (Actions == null) Actions = new List<CommandInfo>();
+        Actions.Add(new CommandInfo(Title, ActionName, CssClass));
+    }
+
+    public void ClearActions()
+    {
+        if (Actions == null)
+            Actions = new List<CommandInfo>();
+        else
+            Actions.Clear();
+    }
+
+    internal void AddColumn(GridColumn newColumn)
+    {
+        AllColumns.Add(newColumn);
+        StateHasChanged();
+    }
+
+    void HandleAction(string CommandName, object item)
+    {
+        OnAction.InvokeAsync(Tuple.Create(CommandName, item));
+    }
+    public IEnumerable<string> GetAllPropsFromClass(object foo)
+    {
+        foreach (var prop in foo.GetType().GetProperties())
+        {
+            yield return prop.Name;
+            //Console.WriteLine("{0}={1}", prop.Name, prop.GetValue(foo, null));
+        }
+    }
+    public static object GetPropValue(object src, string propName)
+    {
+        return src.GetType().GetProperty(propName).GetValue(src, null);
+    }
+
+    public class CommandInfo
+    {
+        public CommandInfo(string Title, string CommandName, string CssClass = "btn btn-primary")
+        {
+            this.Title = Title;
+            this.CommandName = CommandName;
+            this.ClassName = CssClass;
+        }
+        public string ClassName { get; set; }
+        public string Title { get; set; }
+        public string CommandName { get; set; }
+    }
+}

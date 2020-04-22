@@ -23,8 +23,9 @@ namespace TestBlazor.UnitTest
             var component = host.AddComponent<Counter>();
 
             component.Find("button").Click();
+            
 
-            Assert.Equal("Current count: 1", component.Find("p").InnerText);
+            Assert.Equal("Current count: 2", component.Find("p").InnerText);
         }
     }
 }

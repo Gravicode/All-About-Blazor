@@ -27,6 +27,7 @@ else
                 <th>Berat</th>
                 <th>Actions</th>
             </tr>
+            
         </thead>
         <tbody>
             @foreach (var item in DataMahasiswa)
@@ -51,18 +52,19 @@ else
     </table>
 }
 <div>
-    <input type="button" data-toggle="modal" data-target="#taskModal" class="btn btn-primary" value="Add Data" @onclick="(() => InitializeTaskObject())" />
+    <input type="button" data-toggle="modal" data-target="#taskModal" class="btn btn-primary" value="Add Data" @onclick="(() => InitializeitemObject())" />
 </div>
 <ConfirmDialog OnClick="@Delete" />
-<MahasiswaDetail TaskObject=@taskObject DataChanged="@DataChanged">
+<MahasiswaDetail TaskObject=@itemObject DataChanged="@DataChanged">
     <CustomHeader>@customHeader</CustomHeader>
 </MahasiswaDetail>
 
 @code {
-
+   
+   
     string customHeader = string.Empty;
     List<Mahasiswas> DataMahasiswa;
-    Mahasiswas taskObject = new Mahasiswas();
+    Mahasiswas itemObject = new Mahasiswas();
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,11 +72,11 @@ else
     }
 
 
-    private void InitializeTaskObject()
+    private void InitializeitemObject()
     {
-        taskObject = new Mahasiswas();
-        //taskObject.Id = -1;
-        taskObject.TanggalLahir = DateTime.Now;
+        itemObject = new Mahasiswas();
+        //itemObject.Id = -1;
+        itemObject.TanggalLahir = DateTime.Now;
         customHeader = "Add New Mahasiswa";
     }
     private async void DataChanged()
@@ -82,20 +84,20 @@ else
         DataMahasiswa = service.GetAllData();
         StateHasChanged();
     }
-    private void PrepareForEdit(Mahasiswas task)
+    private void PrepareForEdit(Mahasiswas item)
     {
         customHeader = "Edit Mahasiswa";
-        taskObject = task;
+        itemObject = item;
     }
-    private void PrepareForDelete(Mahasiswas task)
+    private void PrepareForDelete(Mahasiswas item)
     {
-        taskObject = task;
+        itemObject = item;
     }
     private async Task Delete()
     {
-        var task = service.DeleteData(taskObject.Id);
+        var task = service.DeleteData(itemObject.Id);
         await jsRuntime.InvokeAsync<object>("CloseModal", "confirmDeleteModal");
         DataMahasiswa =  service.GetAllData();
-        taskObject = new Mahasiswas() { Id=-1 };
+        itemObject = new Mahasiswas() { Id=-1 };
     }
 }

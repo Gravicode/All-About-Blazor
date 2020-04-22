@@ -9,6 +9,7 @@ namespace TestBlazor.Models
         //[Required(ErrorMessage = "ID tolong di isi")]
         public int Id { get; set; }
         [Required(ErrorMessage = "Nim tolong di isi")]
+      
         public string Nim { get; set; }
         [Required(ErrorMessage = "Nama tolong di isi")]
         public string Nama { get; set; }

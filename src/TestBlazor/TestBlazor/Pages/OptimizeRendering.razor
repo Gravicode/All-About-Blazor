@@ -1,0 +1,23 @@
+﻿
+@using System.Linq
+
+@page "/optimize" 
+<h3>OptimizeRendering</h3>
+<ul>
+    @foreach (var item in datas)
+    {
+        <li @key="@item">
+            @item
+        </li>
+    }
+
+</ul>
+<button @onclick="Reverse" class="btn btn-primary">Reverse</button>
+@code {
+    List<int> datas = new List<int>() { 1,2,3,4,5,6,7,8,9};
+
+    void Reverse()
+    {
+        datas.Reverse();
+    }
+}
