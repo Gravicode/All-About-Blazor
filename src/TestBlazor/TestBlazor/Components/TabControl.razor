@@ -3,11 +3,13 @@
     <div class="btn-group" role="group">
         @foreach (TabPage tabPage in Pages)
         {
+            if(tabPage.Visible){
             <button type="button"
                     class="btn @GetButtonClass(tabPage)"
                     @onclick=@( () => ActivatePage(tabPage) )>
                 @tabPage.Text
             </button>
+            }
         }
     </div>
     @ChildContent
@@ -18,7 +20,14 @@
     public RenderFragment ChildContent { get; set; }
 
     public TabPage ActivePage { get; set; }
-    List<TabPage> Pages = new List<TabPage>();
+    [Parameter]
+    public List<TabPage> Pages {set;get;}
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(Pages==null)
+            Pages = new List<TabPage>();
+    }
     internal void AddPage(TabPage tabPage)
     {
         Pages.Add(tabPage);

@@ -1,15 +1,15 @@
 ﻿@page "/counter-alert"
 @using TestBlazor.Components
 <h1>Counter and Tab</h1>
-
-<TabControl>
+<button @onclick="ShowTab3">Show Tab 3</button>
+<TabControl @ref="tab1">
     <TabPage Text="Tab 1">
         <h1>The first tab</h1>
     </TabPage>
     <TabPage Text="Tab 2">
         <h1>The second tab</h1>
     </TabPage>
-    <TabPage Text="Tab 3">
+    <TabPage Visible="@IsVisible" Text="Tab 3">
         <h1>The third tab</h1>
     </TabPage>
 </TabControl>
@@ -29,8 +29,16 @@
 
 
 @code {
+
+    bool IsVisible = false;
     int currentCount = 0;
     List<int> alerts = new List<int>();
+    TabControl tab1;
+    void ShowTab3(){
+        IsVisible = !IsVisible;
+        //tab1.Pages[2].Visible = !tab1.Pages[2].Visible;
+        StateHasChanged();
+    }
     void IncrementCount()
     {
         alerts.Add(currentCount++);
