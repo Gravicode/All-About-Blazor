@@ -32,7 +32,12 @@
                             <tr>
                                 @foreach (var col in GetAllColumns())
                                 {
-                                    <td> @item[col.ColumnName] </td>
+                                    if(!string.IsNullOrEmpty(col.Template)){
+                                        <td> @string.Format(col.Template, item[col.ColumnName]) </td>
+                                    }else{
+                                        <td> @item[col.ColumnName] </td>
+                                    }
+                                    
                                 }
                                 @if (Actions.Count > 0)
                                 {
@@ -59,7 +64,11 @@
                             <tr>
                                 @foreach (var col in GetAllColumns())
                                 {
-                                    <td> @(GetPropValue(item, col.ColumnName)) </td>
+                                    if(!string.IsNullOrEmpty(col.Template)){
+                                        <td> @string.Format(col.Template, GetPropValue(item, col.ColumnName)) </td>
+                                    }else{
+                                        <td> @(GetPropValue(item, col.ColumnName)) </td>
+                                    }
                                 }
                                 @if (Actions.Count > 0)
                                 {

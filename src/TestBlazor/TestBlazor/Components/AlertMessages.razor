@@ -2,6 +2,7 @@
 @foreach (var item in Items)
 {
     <AlertMessage>
+        
         @AlertTemplate(item)
         @if (OnDelete.HasDelegate)
         {

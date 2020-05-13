@@ -7,9 +7,10 @@
 <b>Bind to List</b>
 <GridView @ref="gv" DataSource="datas" ShowAllColumns="false" OnAction="@ActionItem">
     <GridColumns>
-        <GridColumn ColumnName="Date" HeaderTitle="Tanggal"></GridColumn>
+        <GridColumn ColumnName="Date" Template="{0:MM/dd/yyyy}" HeaderTitle="Tanggal"></GridColumn>
         <GridColumn ColumnName="TemperatureC" HeaderTitle="Temp C"></GridColumn>
         <GridColumn ColumnName="Summary" HeaderTitle="Keterangan"></GridColumn>
+       
     </GridColumns>
 </GridView>
 <hr />
